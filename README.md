@@ -1,4 +1,4 @@
-# BigCache [![Build Status](https://github.com/allegro/bigcache/workflows/build/badge.svg)](https://github.com/allegro/bigcache/actions?query=workflow%3Abuild)&nbsp;[![Coverage Status](https://coveralls.io/repos/github/allegro/bigcache/badge.svg?branch=master)](https://coveralls.io/github/allegro/bigcache?branch=master)&nbsp;[![GoDoc](https://godoc.org/github.com/allegro/bigcache/v3?status.svg)](https://godoc.org/github.com/allegro/bigcache/v3)&nbsp;[![Go Report Card](https://goreportcard.com/badge/github.com/allegro/bigcache/v3)](https://goreportcard.com/report/github.com/allegro/bigcache/v3)
+# BigCache [![Build Status](https://github.com/wwwzyb2002/bigcache/workflows/build/badge.svg)](https://github.com/wwwzyb2002/bigcache/actions?query=workflow%3Abuild)&nbsp;[![Coverage Status](https://coveralls.io/repos/github/wwwzyb2002/bigcache/badge.svg?branch=master)](https://coveralls.io/github/wwwzyb2002/bigcache?branch=master)&nbsp;[![GoDoc](https://godoc.org/github.com/wwwzyb2002/bigcache/v3?status.svg)](https://godoc.org/github.com/wwwzyb2002/bigcache/v3)&nbsp;[![Go Report Card](https://goreportcard.com/badge/github.com/wwwzyb2002/bigcache/v3)](https://goreportcard.com/report/github.com/wwwzyb2002/bigcache/v3)
 
 Fast, concurrent, evicting in-memory cache written to keep big number of entries without impact on performance.
 BigCache keeps entries on heap but omits GC for them. To achieve that, operations on byte slices take place,
@@ -14,7 +14,7 @@ Requires Go 1.12 or newer.
 import (
 	"fmt"
 	"context"
-	"github.com/allegro/bigcache/v3"
+	"github.com/wwwzyb2002/bigcache/v3"
 )
 
 cache, _ := bigcache.New(context.Background(), bigcache.DefaultConfig(10 * time.Minute))
@@ -34,7 +34,7 @@ allocation can be avoided in that way.
 import (
 	"log"
 
-	"github.com/allegro/bigcache/v3"
+	"github.com/wwwzyb2002/bigcache/v3"
 )
 
 config := bigcache.Config {
@@ -93,13 +93,13 @@ if entry, err := cache.Get("my-unique-key"); err == nil {
 
 2. `CleanWindow` is a time. After that time, all the dead entries will be deleted, but not the entries that still have life.
 
-## [Benchmarks](https://github.com/allegro/bigcache-bench)
+## [Benchmarks](https://github.com/wwwzyb2002/bigcache-bench)
 
 Three caches were compared: bigcache, [freecache](https://github.com/coocood/freecache) and map.
 Benchmark tests were made using an
 i7-6700K CPU @ 4.00GHz with 32GB of RAM on Ubuntu 18.04 LTS (5.2.12-050212-generic).
 
-Benchmarks source code can be found [here](https://github.com/allegro/bigcache-bench)
+Benchmarks source code can be found [here](https://github.com/wwwzyb2002/bigcache-bench)
 
 ### Writes and reads
 
@@ -110,7 +110,7 @@ go version go1.13 linux/amd64
 go test -bench=. -benchmem -benchtime=4s ./... -timeout 30m
 goos: linux
 goarch: amd64
-pkg: github.com/allegro/bigcache/v3/caches_bench
+pkg: github.com/wwwzyb2002/bigcache/v3/caches_bench
 BenchmarkMapSet-8                     	12999889	       376 ns/op	     199 B/op	       3 allocs/op
 BenchmarkConcurrentMapSet-8           	 4355726	      1275 ns/op	     337 B/op	       8 allocs/op
 BenchmarkFreeCacheSet-8               	11068976	       703 ns/op	     328 B/op	       2 allocs/op
@@ -126,7 +126,7 @@ BenchmarkBigCacheGetParallel-8        	60547064	        86.1 ns/op	     152 B/op
 BenchmarkFreeCacheGetParallel-8       	50701280	       147 ns/op	     136 B/op	       3 allocs/op
 BenchmarkConcurrentMapGetParallel-8   	27353288	       175 ns/op	      24 B/op	       2 allocs/op
 PASS
-ok  	github.com/allegro/bigcache/v3/caches_bench	256.257s
+ok  	github.com/wwwzyb2002/bigcache/v3/caches_bench	256.257s
 ```
 
 Writes and reads in bigcache are faster than in freecache.
@@ -189,7 +189,7 @@ One of the advantage of bigcache over freecache is that you don’t need to know
 the size of the cache in advance, because when bigcache is full,
 it can allocate additional memory for new entries instead of
 overwriting existing ones as freecache does currently.
-However hard max size in bigcache also can be set, check [HardMaxCacheSize](https://godoc.org/github.com/allegro/bigcache#Config).
+However hard max size in bigcache also can be set, check [HardMaxCacheSize](https://godoc.org/github.com/wwwzyb2002/bigcache#Config).
 
 ## HTTP Server
 
@@ -197,7 +197,7 @@ This package also includes an easily deployable HTTP implementation of BigCache,
 
 ## More
 
-Bigcache genesis is described in allegro.tech blog post: [writing a very fast cache service in Go](http://allegro.tech/2016/03/writing-fast-cache-service-in-go.html)
+Bigcache genesis is described in wwwzyb2002.tech blog post: [writing a very fast cache service in Go](http://wwwzyb2002.tech/2016/03/writing-fast-cache-service-in-go.html)
 
 ## License
 
