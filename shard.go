@@ -28,9 +28,10 @@ type cacheShard struct {
 	clock        clock
 	lifeWindow   uint64
 
-	hashmapStats map[uint64]uint32
-	stats        Stats
-	cleanEnabled bool
+	hashmapStats           map[uint64]uint32
+	stats                  Stats
+	cleanEnabled           bool
+	maxCleanCountPerWindow int
 }
 
 func (s *cacheShard) getWithInfo(key string, hashedKey uint64) (entry []byte, resp Response, err error) {
@@ -291,10 +292,20 @@ func (s *cacheShard) isExpired(oldestEntry []byte, currentTimestamp uint64) bool
 
 func (s *cacheShard) cleanUp(currentTimestamp uint64) {
 	s.lock.Lock()
+	cleanCount := 0
 	for {
-		if oldestEntry, err := s.entries.Peek(); err != nil {
+		oldestEntry, err := s.entries.Peek()
+		if err != nil {
 			break
-		} else if evicted := s.onEvict(oldestEntry, currentTimestamp, s.removeOldestEntry); !evicted {
+		}
+
+		evicted := s.onEvict(oldestEntry, currentTimestamp, s.removeOldestEntry)
+		if !evicted {
+			break
+		}
+
+		cleanCount++
+		if s.maxCleanCountPerWindow > 0 && cleanCount >= s.maxCleanCountPerWindow {
 			break
 		}
 	}
@@ -444,11 +455,12 @@ func initNewShard(config Config, callback onRemoveCallback, clock clock) *cacheS
 		entryBuffer:  make([]byte, config.MaxEntrySize+headersSizeInBytes),
 		onRemove:     callback,
 
-		isVerbose:    config.Verbose,
-		logger:       newLogger(config.Logger),
-		clock:        clock,
-		lifeWindow:   uint64(config.LifeWindow.Seconds()),
-		statsEnabled: config.StatsEnabled,
-		cleanEnabled: config.CleanWindow > 0,
+		isVerbose:              config.Verbose,
+		logger:                 newLogger(config.Logger),
+		clock:                  clock,
+		lifeWindow:             uint64(config.LifeWindow.Seconds()),
+		statsEnabled:           config.StatsEnabled,
+		cleanEnabled:           config.CleanWindow > 0,
+		maxCleanCountPerWindow: config.MaxCleanCountPerWindow,
 	}
 }

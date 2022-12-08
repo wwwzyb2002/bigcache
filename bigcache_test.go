@@ -475,6 +475,37 @@ func TestOnRemoveFilterExpired(t *testing.T) {
 	assertEqual(t, false, onRemoveExpired)
 }
 
+func TestOnRemoveFilterExpired_MaxCleanCountPerWindow(t *testing.T) {
+	// t.Parallel()
+
+	// given
+	clock := mockedClock{value: 0}
+	var removeCount = 0
+	onRemove := func(key string, entry []byte, reason RemoveReason) {
+		removeCount++
+	}
+	c := Config{
+		Shards:                 1,
+		LifeWindow:             3 * time.Second,
+		CleanWindow:            1,
+		MaxEntriesInWindow:     10,
+		MaxCleanCountPerWindow: 2,
+		MaxEntrySize:           256,
+		OnRemoveWithReason:     onRemove,
+	}
+
+	cache, err := newBigCache(context.Background(), c, &clock)
+	assertEqual(t, err, nil)
+
+	cache.Set("key", []byte("value"))
+	cache.Set("key2", []byte("value"))
+	cache.Set("key3", []byte("value"))
+	clock.set(5)
+	cache.cleanUp(uint64(clock.Epoch()))
+
+	assertEqual(t, 2, removeCount)
+}
+
 func TestOnRemoveGetEntryStats(t *testing.T) {
 	t.Parallel()
 

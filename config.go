@@ -11,6 +11,9 @@ type Config struct {
 	// Interval between removing expired entries (clean up).
 	// If set to <= 0 then no action is performed. Setting to < 1 second is counterproductive — bigcache has a one second resolution.
 	CleanWindow time.Duration
+	// max expired clean count per window
+	// If set to <= 0 then clean all expired entries duration in clean window
+	MaxCleanCountPerWindow int
 	// Max number of entries in life window. Used only to calculate initial size for cache shards.
 	// When proper value is set then additional memory allocation does not occur.
 	MaxEntriesInWindow int
